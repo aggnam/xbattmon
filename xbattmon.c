@@ -63,7 +63,7 @@ int howmuch;			/* 0 if completely discharged or 100 if completely charged */
 unsigned int thickness = 4;	/* 4 pixels by default */
 time_t pollinterval = 5;	/* poll battery state every 5 seconds */
 int bottom = 1;			/* set to 0 if you want the bar to be at the top */
-int max = 100;			/* maximum battery capacity */
+int maxcap = 100;		/* maximum battery capacity */
 
 void
 setup(void)
@@ -121,7 +121,7 @@ redraw(void)
 {
 	int pos;
 
-	pos = barwidth * howmuch / max;
+	pos = barwidth * howmuch / maxcap;
 	switch (state) {
 	case BATT_CHARGING:
 		XSetForeground(dpy, gcbar, colmap[COLOR_BATT_CHARGED].pixel);
