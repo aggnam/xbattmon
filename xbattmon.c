@@ -157,8 +157,8 @@ update(void)
 	close(fd);
 
 	howmuch = info.battery_life;
-	if (howmuch > 100)
-		howmuch = 100;
+	if (howmuch > maxcap)
+		howmuch = maxcap;
 
 	if (info.ac_state == APM_AC_ON)
 		state = BATT_CHARGING;
