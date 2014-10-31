@@ -147,10 +147,7 @@ update(void)
 	if (howmuch > maxcap)
 		howmuch = maxcap;
 
-	if (info.ac_state == APM_AC_ON)
-		state = AC_ON;
-	else
-		state = AC_OFF;
+	state = info.ac_state == APM_AC_ON ? AC_ON : AC_OFF;
 }
 
 Bool
