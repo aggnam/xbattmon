@@ -48,7 +48,7 @@ int bary;
 unsigned int barwidth;
 unsigned int barheight;
 int state;			/* AC_ON or AC_OFF */
-int howmuch;			/* 0 if completely discharged or 100 if completely charged */
+int howmuch;			/* 0 if completely discharged or `maxcap' if completely charged */
 
 #include "config.h"
 
