@@ -29,8 +29,8 @@
 #define LEN(x) (sizeof(x) / sizeof(*(x)))
 
 enum {
-	BATT_CHARGING,
-	BATT_DRAINING
+	AC_ON,
+	AC_OFF
 };
 
 enum {
@@ -40,16 +40,6 @@ enum {
 	COLOR_BATT_LEFT2DRAIN
 };
 
-struct {
-	char *name;
-	unsigned long pixel;
-} colmap[] = {
-	[COLOR_BATT_CHARGED]     = { "green", 0 },
-	[COLOR_BATT_LEFT2CHARGE] = { "grey",  0 },
-	[COLOR_BATT_DRAINED]     = { "red",   0 },
-	[COLOR_BATT_LEFT2DRAIN]  = { "blue",  0 }
-};
-
 Display *dpy;
 Window winbar;
 GC gcbar;
@@ -57,13 +47,10 @@ int barx;
 int bary;
 unsigned int barwidth;
 unsigned int barheight;
-int state;			/* BATT_CHARGING or BATT_DRAINING */
+int state;			/* AC_ON or AC_OFF */
 int howmuch;			/* 0 if completely discharged or 100 if completely charged */
 
-unsigned int thickness = 4;	/* 4 pixels by default */
-time_t pollinterval = 5;	/* poll battery state every 5 seconds */
-int bottom = 1;			/* set to 0 if you want the bar to be at the top */
-int maxcap = 100;		/* maximum battery capacity */
+#include "config.h"
 
 void
 setup(void)
@@ -123,13 +110,13 @@ redraw(void)
 
 	pos = barwidth * howmuch / maxcap;
 	switch (state) {
-	case BATT_CHARGING:
+	case AC_ON:
 		XSetForeground(dpy, gcbar, colmap[COLOR_BATT_CHARGED].pixel);
 		XFillRectangle(dpy, winbar, gcbar, 0, 0, pos, thickness);
 		XSetForeground(dpy, gcbar, colmap[COLOR_BATT_LEFT2CHARGE].pixel);
 		XFillRectangle(dpy, winbar, gcbar, pos, 0, barwidth, thickness);
 		break;
-	case BATT_DRAINING:
+	case AC_OFF:
 		XSetForeground(dpy, gcbar, colmap[COLOR_BATT_LEFT2DRAIN].pixel);
 		XFillRectangle(dpy, winbar, gcbar, 0, 0, pos, thickness);
 		XSetForeground(dpy, gcbar, colmap[COLOR_BATT_DRAINED].pixel);
@@ -161,9 +148,9 @@ update(void)
 		howmuch = maxcap;
 
 	if (info.ac_state == APM_AC_ON)
-		state = BATT_CHARGING;
+		state = AC_ON;
 	else
-		state = BATT_DRAINING;
+		state = AC_OFF;
 
 	fflush(stdout);
 }
