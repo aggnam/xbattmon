@@ -52,6 +52,8 @@ int howmuch;			/* 0 if completely discharged or `maxcap' if completely charged *
 
 #include "config.h"
 
+unsigned long cmap[LEN(colors)];
+
 void
 setup(void)
 {
@@ -94,12 +96,12 @@ setup(void)
 
 	gcbar = XCreateGC(dpy, winbar, 0, 0);
 
-	for (i = 0; i < LEN(colmap); i++) {
+	for (i = 0; i < LEN(colors); i++) {
 		r = XAllocNamedColor(dpy, DefaultColormap(dpy, 0),
-				     colmap[i].name, &color, &exact);
+				     colors[i], &color, &exact);
 		if (r == 0)
 			errx(1, "cannot allocate color resources");
-		colmap[i].pixel = color.pixel;
+		cmap[i] = color.pixel;
 	}
 }
 
@@ -111,15 +113,15 @@ redraw(void)
 	pos = barwidth * howmuch / maxcap;
 	switch (state) {
 	case AC_ON:
-		XSetForeground(dpy, gcbar, colmap[COLOR_BATT_CHARGED].pixel);
+		XSetForeground(dpy, gcbar, cmap[COLOR_BATT_CHARGED]);
 		XFillRectangle(dpy, winbar, gcbar, 0, 0, pos, thickness);
-		XSetForeground(dpy, gcbar, colmap[COLOR_BATT_LEFT2CHARGE].pixel);
+		XSetForeground(dpy, gcbar, cmap[COLOR_BATT_LEFT2CHARGE]);
 		XFillRectangle(dpy, winbar, gcbar, pos, 0, barwidth, thickness);
 		break;
 	case AC_OFF:
-		XSetForeground(dpy, gcbar, colmap[COLOR_BATT_LEFT2DRAIN].pixel);
+		XSetForeground(dpy, gcbar, cmap[COLOR_BATT_LEFT2DRAIN]);
 		XFillRectangle(dpy, winbar, gcbar, 0, 0, pos, thickness);
-		XSetForeground(dpy, gcbar, colmap[COLOR_BATT_DRAINED].pixel);
+		XSetForeground(dpy, gcbar, cmap[COLOR_BATT_DRAINED]);
 		XFillRectangle(dpy, winbar, gcbar, pos, 0, barwidth, thickness);
 		break;
 	}

@@ -1,11 +1,8 @@
-struct {
-	char *name;
-	unsigned long pixel;
-} colmap[] = {
-	[COLOR_BATT_CHARGED]     = { "green", 0 },
-	[COLOR_BATT_LEFT2CHARGE] = { "grey",  0 },
-	[COLOR_BATT_DRAINED]     = { "red",   0 },
-	[COLOR_BATT_LEFT2DRAIN]  = { "blue",  0 }
+char *colors[] = {
+	[COLOR_BATT_CHARGED]     = "green",
+	[COLOR_BATT_LEFT2CHARGE] = "grey",
+	[COLOR_BATT_DRAINED]     = "red",
+	[COLOR_BATT_LEFT2DRAIN]  = "blue"
 };
 
 unsigned int thickness = 4;	/* 4 pixels by default */
