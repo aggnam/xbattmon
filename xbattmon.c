@@ -127,7 +127,7 @@ redraw(void)
 }
 
 void
-update(void)
+recalc(void)
 {
 	int r;
 	int fd;
@@ -179,7 +179,7 @@ again:
 			err(1, "select");
 		}
 		if (n == 0) {
-			update();
+			recalc();
 			redraw();
 			continue;
 		}
@@ -203,7 +203,7 @@ int
 main(void)
 {
 	setup();
-	update();
+	recalc();
 	redraw();
 	loop();
 	return 0;
