@@ -151,8 +151,6 @@ update(void)
 		state = AC_ON;
 	else
 		state = AC_OFF;
-
-	fflush(stdout);
 }
 
 Bool
