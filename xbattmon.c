@@ -212,7 +212,8 @@ again:
 void
 usage(void)
 {
-	fprintf(stderr, "usage: %s [-i interval] [-p bottom | top] [-t thickness]\n", argv0);
+	fprintf(stderr, "usage: %s [-c capacity] [-i interval] [-p bottom | top] [-t thickness]\n", argv0);
+	fprintf(stderr, " -c\tspecify batter capacity\n");
 	fprintf(stderr, " -i\tbattery poll interval in seconds\n");
 	fprintf(stderr, " -p\tbar placement\n");
 	fprintf(stderr, " -t\tbar thickness\n");
@@ -226,6 +227,12 @@ main(int argc, char *argv[])
 	const char *errstr;
 
 	ARGBEGIN {
+	case 'c':
+		arg = EARGF(usage());
+		maxcap = strtonum(arg, 1, 100, &errstr);
+		if (errstr)
+			errx(1, "%s: %s", arg, errstr);
+		break;
 	case 'i':
 		arg = EARGF(usage());
 		pollinterval = strtonum(arg, 1, 60, &errstr);
