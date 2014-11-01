@@ -212,8 +212,9 @@ again:
 void
 usage(void)
 {
-	fprintf(stderr, "usage: %s [-i interval] [-t thickness]\n", argv0);
+	fprintf(stderr, "usage: %s [-i interval] [-p bottom | top] [-t thickness]\n", argv0);
 	fprintf(stderr, " -i\tbattery poll interval in seconds\n");
+	fprintf(stderr, " -p\tbar placement\n");
 	fprintf(stderr, " -t\tbar thickness\n");
 	exit(1);
 }
@@ -230,6 +231,15 @@ main(int argc, char *argv[])
 		pollinterval = strtonum(arg, 1, 60, &errstr);
 		if (errstr)
 			errx(1, "%s: %s", arg, errstr);
+		break;
+	case 'p':
+		arg = EARGF(usage());
+		if (strcmp(arg, "bottom") == 0)
+			bottom = 1;
+		else if (strcmp(arg, "top") == 0)
+			bottom = 0;
+		else
+			errx(1, "%s: invalid placement", arg);
 		break;
 	case 't':
 		arg = EARGF(usage());
