@@ -20,11 +20,15 @@
 #include <err.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <limits.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include <machine/apmvar.h>
 #include <X11/Xlib.h>
+
+#include "arg.h"
 
 #define LEN(x) (sizeof(x) / sizeof(*(x)))
 
@@ -40,6 +44,7 @@ enum {
 	COLOR_BATT_LEFT2DRAIN
 };
 
+char *argv0;
 Display *dpy;
 Window winbar;
 GC gcbar;
@@ -201,9 +206,31 @@ again:
 	}
 }
 
-int
-main(void)
+void
+usage(void)
 {
+	fprintf(stderr, "usage: %s [-i interval]\n", argv0);
+	fprintf(stderr, " -i\tbattery poll interval\n");
+	exit(1);
+}
+
+int
+main(int argc, char *argv[])
+{
+	char *arg;
+	const char *errstr;
+
+	ARGBEGIN {
+	case 'i':
+		arg = EARGF(usage());
+		pollinterval = strtonum(arg, 0, INT_MAX, &errstr);
+		if (errstr)
+			errx(1, "%s: %s", arg, errstr);
+		break;
+	default:
+		usage();
+	} ARGEND;
+
 	setup();
 	recalc();
 	redraw();
