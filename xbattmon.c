@@ -213,7 +213,7 @@ void
 usage(void)
 {
 	fprintf(stderr, "usage: %s [-i interval] [-t thickness]\n", argv0);
-	fprintf(stderr, " -i\tbattery poll interval\n");
+	fprintf(stderr, " -i\tbattery poll interval in seconds\n");
 	fprintf(stderr, " -t\tbar thickness\n");
 	exit(1);
 }
@@ -227,7 +227,7 @@ main(int argc, char *argv[])
 	ARGBEGIN {
 	case 'i':
 		arg = EARGF(usage());
-		pollinterval = strtonum(arg, 0, INT_MAX, &errstr);
+		pollinterval = strtonum(arg, 1, 60, &errstr);
 		if (errstr)
 			errx(1, "%s: %s", arg, errstr);
 		break;
