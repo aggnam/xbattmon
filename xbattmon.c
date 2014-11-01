@@ -258,6 +258,9 @@ main(int argc, char *argv[])
 		usage();
 	} ARGEND;
 
+	if (argc != 0)
+		usage();
+
 	setup();
 	recalc();
 	redraw();
