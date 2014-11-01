@@ -23,10 +23,10 @@ enum {
 };
 
 enum {
-	COLOR_BATT_CHARGED,
-	COLOR_BATT_LEFT2CHARGE,
-	COLOR_BATT_DRAINED,
-	COLOR_BATT_LEFT2DRAIN
+	COLOR_BAT_CHARGED,
+	COLOR_BAT_LEFT2CHARGE,
+	COLOR_BAT_DRAINED,
+	COLOR_BAT_LEFT2DRAIN
 };
 
 char *argv0;
@@ -106,15 +106,15 @@ redraw(void)
 	pos = barwidth * howmuch / maxcap;
 	switch (state) {
 	case AC_ON:
-		XSetForeground(dpy, gcbar, cmap[COLOR_BATT_CHARGED]);
+		XSetForeground(dpy, gcbar, cmap[COLOR_BAT_CHARGED]);
 		XFillRectangle(dpy, winbar, gcbar, 0, 0, pos, thickness);
-		XSetForeground(dpy, gcbar, cmap[COLOR_BATT_LEFT2CHARGE]);
+		XSetForeground(dpy, gcbar, cmap[COLOR_BAT_LEFT2CHARGE]);
 		XFillRectangle(dpy, winbar, gcbar, pos, 0, barwidth, thickness);
 		break;
 	case AC_OFF:
-		XSetForeground(dpy, gcbar, cmap[COLOR_BATT_LEFT2DRAIN]);
+		XSetForeground(dpy, gcbar, cmap[COLOR_BAT_LEFT2DRAIN]);
 		XFillRectangle(dpy, winbar, gcbar, 0, 0, pos, thickness);
-		XSetForeground(dpy, gcbar, cmap[COLOR_BATT_DRAINED]);
+		XSetForeground(dpy, gcbar, cmap[COLOR_BAT_DRAINED]);
 		XFillRectangle(dpy, winbar, gcbar, pos, 0, barwidth, thickness);
 		break;
 	}
