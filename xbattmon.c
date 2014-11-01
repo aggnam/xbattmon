@@ -213,7 +213,7 @@ void
 usage(void)
 {
 	fprintf(stderr, "usage: %s [-c capacity] [-i interval] [-p bottom | top] [-t thickness]\n", argv0);
-	fprintf(stderr, " -c\tspecify batter capacity\n");
+	fprintf(stderr, " -c\tspecify battery capacity\n");
 	fprintf(stderr, " -i\tbattery poll interval in seconds\n");
 	fprintf(stderr, " -p\tbar placement\n");
 	fprintf(stderr, " -t\tbar thickness\n");
