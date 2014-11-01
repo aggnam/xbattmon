@@ -77,6 +77,9 @@ setup(void)
 	width = DisplayWidth(dpy, screen);
 	height = DisplayHeight(dpy, screen);
 
+	if (thickness > height)
+		thickness = height;
+
 	if (bottom == 1) {	
 		barx = 0;
 		bary = height - thickness;
@@ -209,8 +212,9 @@ again:
 void
 usage(void)
 {
-	fprintf(stderr, "usage: %s [-i interval]\n", argv0);
+	fprintf(stderr, "usage: %s [-i interval] [-t thickness]\n", argv0);
 	fprintf(stderr, " -i\tbattery poll interval\n");
+	fprintf(stderr, " -t\tbar thickness\n");
 	exit(1);
 }
 
@@ -224,6 +228,12 @@ main(int argc, char *argv[])
 	case 'i':
 		arg = EARGF(usage());
 		pollinterval = strtonum(arg, 0, INT_MAX, &errstr);
+		if (errstr)
+			errx(1, "%s: %s", arg, errstr);
+		break;
+	case 't':
+		arg = EARGF(usage());
+		thickness = strtonum(arg, 0, INT_MAX, &errstr);
 		if (errstr)
 			errx(1, "%s: %s", arg, errstr);
 		break;
