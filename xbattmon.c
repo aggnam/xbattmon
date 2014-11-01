@@ -250,7 +250,7 @@ main(int argc, char *argv[])
 		break;
 	case 't':
 		arg = EARGF(usage());
-		thickness = strtonum(arg, 0, INT_MAX, &errstr);
+		thickness = strtonum(arg, 1, INT_MAX, &errstr);
 		if (errstr)
 			errx(1, "%s: %s", arg, errstr);
 		break;
