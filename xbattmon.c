@@ -122,7 +122,7 @@ redraw(void)
 }
 
 void
-recalc(void)
+pollbat(void)
 {
 	int r;
 	int fd;
@@ -174,7 +174,7 @@ again:
 			err(1, "select");
 		}
 		if (n == 0) {
-			recalc();
+			pollbat();
 			redraw();
 			continue;
 		}
@@ -247,7 +247,7 @@ main(int argc, char *argv[])
 		usage();
 
 	setup();
-	recalc();
+	pollbat();
 	redraw();
 	loop();
 	return 0;
