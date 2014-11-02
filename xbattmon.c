@@ -147,6 +147,9 @@ pollbat(void)
 	if (howmuch > maxcap)
 		howmuch = maxcap;
 
+	if (info.ac_state == APM_AC_UNKNOWN)
+		warnx("unknown AC state");
+
 	state = info.ac_state == APM_AC_ON ? AC_ON : AC_OFF;
 }
 #elif __linux__
