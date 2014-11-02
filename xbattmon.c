@@ -131,13 +131,13 @@ pollbat(void)
 	int r;
 	int fd;
 
-#define _PATH_APM "/dev/apm"
-	fd = open(_PATH_APM, O_RDONLY);
+#define PATH_APM "/dev/apm"
+	fd = open(PATH_APM, O_RDONLY);
 	if (fd < 0)
-		err(1, "open %s", _PATH_APM);
+		err(1, "open %s", PATH_APM);
 	r = ioctl(fd, APM_IOC_GETPOWER, &info);
 	if (r != 0)
-		err(1, "APM_IOC_GETPOWER %s", _PATH_APM);
+		err(1, "APM_IOC_GETPOWER %s", PATH_APM);
 	close(fd);
 
 	howmuch = info.battery_life;
@@ -153,20 +153,20 @@ pollbat(void)
 	FILE *fp;
 	int acon;
 
-#define _PATH_BAT0_CAP "/sys/class/power_supply/BAT0/capacity"
-	fp = fopen(_PATH_BAT0_CAP, "r");
+#define PATH_BAT0_CAP "/sys/class/power_supply/BAT0/capacity"
+	fp = fopen(PATH_BAT0_CAP, "r");
 	if (fp == NULL)
-		err(1, "fopen %s", _PATH_BAT0_CAP);
+		err(1, "fopen %s", PATH_BAT0_CAP);
 	fscanf(fp, "%d", &howmuch);
 	fclose(fp);
 
 	if (howmuch > maxcap)
 		howmuch = maxcap;
 
-#define _PATH_AC_ONLINE "/sys/class/power_supply/AC/online"
-	fp = fopen(_PATH_AC_ONLINE, "r");
+#define PATH_AC_ONLINE "/sys/class/power_supply/AC/online"
+	fp = fopen(PATH_AC_ONLINE, "r");
 	if (fp == NULL)
-		err(1, "fopen %s", _PATH_AC_ONLINE);
+		err(1, "fopen %s", PATH_AC_ONLINE);
 	fscanf(fp, "%d", &acon);
 	fclose(fp);
 
