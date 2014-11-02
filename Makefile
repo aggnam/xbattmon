@@ -8,7 +8,7 @@ all: $(BIN)
 $(BIN): $(OBJ)
 	$(CC) $(CFLAGS) -o $@ $(OBJ) $(LDLIBS)
 
-xbattmon.o: config.h
+xbattmon.o: arg.h config.h
 
 install: all
 	mkdir -p $(DESTDIR)$(PREFIX)/bin
