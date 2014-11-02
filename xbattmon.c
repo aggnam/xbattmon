@@ -87,7 +87,10 @@ setup(void)
 	XChangeWindowAttributes(dpy, winbar, CWOverrideRedirect, &attr);
 
 	XSelectInput(dpy, winbar, ExposureMask | VisibilityChangeMask);
-	XMapRaised(dpy, winbar);
+	if (raise == 1)
+		XMapRaised(dpy, winbar);
+	else
+		XMapWindow(dpy, winbar);
 
 	gcbar = XCreateGC(dpy, winbar, 0, 0);
 
@@ -217,7 +220,8 @@ again:
 					break;
 				case VisibilityNotify:
 					if (ev.xvisibility.state != VisibilityUnobscured)
-						XRaiseWindow(dpy, winbar);
+						if (raise == 1)
+							XRaiseWindow(dpy, winbar);
 					break;
 				}
 			}
