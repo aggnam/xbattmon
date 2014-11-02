@@ -1,7 +1,7 @@
 PREFIX = /usr/local
 
 CFLAGS = -I/usr/X11R6/include
-LDLIBS = -L/usr/X11R6/lib -lX11
+LDLIBS = -L/usr/X11R6/lib -lX11 # -lbsd
 
 OBJ = xbattmon.o
 BIN = xbattmon

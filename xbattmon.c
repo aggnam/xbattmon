@@ -10,7 +10,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifdef __OpenBSD__
 #include <machine/apmvar.h>
+#endif
 #include <X11/Xlib.h>
 
 #include "arg.h"
@@ -121,13 +123,13 @@ redraw(void)
 	XFlush(dpy);
 }
 
+#ifdef __OpenBSD__
 void
 pollbat(void)
 {
+	struct apm_power_info info;
 	int r;
 	int fd;
-	int v;
-	struct apm_power_info info;
 
 #define _PATH_APM "/dev/apm"
 	fd = open(_PATH_APM, O_RDONLY);
@@ -144,6 +146,47 @@ pollbat(void)
 
 	state = info.ac_state == APM_AC_ON ? AC_ON : AC_OFF;
 }
+#elif __linux__
+void
+pollbat(void)
+{
+	FILE *fp;
+	char buf[BUFSIZ];
+	char *errstr;
+
+#define _PATH_BAT0_CAP "/sys/class/power_supply/BAT0/capacity"
+	fp = fopen(_PATH_BAT0_CAP, "r");
+	if (fp == NULL)
+		err(1, "fopen %s", _PATH_BAT0_CAP);
+	if (fgets(buf, sizeof(buf), fp) == NULL)
+		if (ferror(fp))
+			err(1, "fgets %s", _PATH_BAT0_CAP);
+	if (buf[strlen(buf) - 1] == '\n')
+		buf[strlen(buf) - 1] = '\0';
+	fclose(fp);
+
+	howmuch = strtonum(buf, 0, INT_MAX, &errstr);
+	if (errstr)
+		errx(1, "%s: %s", buf, errstr);
+	if (howmuch > maxcap)
+		howmuch = maxcap;
+
+#define _PATH_AC_ONLINE "/sys/class/power_supply/AC/online"
+	fp = fopen(_PATH_AC_ONLINE, "r");
+	if (fp == NULL)
+		err(1, "fopen %s", _PATH_AC_ONLINE);
+	if (fgets(buf, sizeof(buf), fp) == NULL)
+		if (ferror(fp))
+			err(1, "fgets %s", _PATH_AC_ONLINE);
+	if (buf[strlen(buf) - 1] == '\n');
+		buf[strlen(buf) - 1] = '\0';
+	fclose(fp);
+
+	state = buf[0] == '1' ? AC_ON : AC_OFF;
+}
+#else
+#error unsupported system
+#endif
 
 Bool
 evpredicate()
