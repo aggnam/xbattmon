@@ -216,6 +216,7 @@ again:
 			while (XCheckIfEvent(dpy, &ev, evpredicate, NULL) == True) {
 				switch (ev.type) {
 				case Expose:
+					pollbat();
 					redraw();
 					break;
 				case VisibilityNotify:
