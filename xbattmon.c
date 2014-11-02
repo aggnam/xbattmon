@@ -9,6 +9,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#ifdef __linux__
+#include <bsd/stdlib.h>
+#endif
 
 #ifdef __OpenBSD__
 #include <machine/apmvar.h>
