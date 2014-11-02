@@ -40,7 +40,7 @@ int bary;
 unsigned int barwidth;
 unsigned int barheight;
 int state;			/* AC_ON or AC_OFF */
-int howmuch;			/* 0 if completely discharged or `maxcap' if completely charged */
+int batcap;			/* 0 if completely discharged or `maxcap' if completely charged */
 
 #include "config.h"
 
@@ -108,7 +108,7 @@ redraw(void)
 {
 	int pos;
 
-	pos = barwidth * howmuch / maxcap;
+	pos = barwidth * batcap / maxcap;
 	switch (state) {
 	case AC_ON:
 		XSetForeground(dpy, gcbar, cmap[COLOR_BAT_CHARGED]);
@@ -143,9 +143,9 @@ pollbat(void)
 		err(1, "APM_IOC_GETPOWER %s", PATH_APM);
 	close(fd);
 
-	howmuch = info.battery_life;
-	if (howmuch > maxcap)
-		howmuch = maxcap;
+	batcap = info.battery_life;
+	if (batcap > maxcap)
+		batcap = maxcap;
 
 	if (info.ac_state == APM_AC_UNKNOWN)
 		warnx("unknown AC state");
@@ -163,11 +163,11 @@ pollbat(void)
 	fp = fopen(PATH_BAT0_CAP, "r");
 	if (fp == NULL)
 		err(1, "fopen %s", PATH_BAT0_CAP);
-	fscanf(fp, "%d", &howmuch);
+	fscanf(fp, "%d", &batcap);
 	fclose(fp);
 
-	if (howmuch > maxcap)
-		howmuch = maxcap;
+	if (batcap > maxcap)
+		batcap = maxcap;
 
 #define PATH_AC_ONLINE "/sys/class/power_supply/AC/online"
 	fp = fopen(PATH_AC_ONLINE, "r");
