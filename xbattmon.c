@@ -151,23 +151,15 @@ void
 pollbat(void)
 {
 	FILE *fp;
-	char buf[BUFSIZ];
-	char *errstr;
+	int acon;
 
 #define _PATH_BAT0_CAP "/sys/class/power_supply/BAT0/capacity"
 	fp = fopen(_PATH_BAT0_CAP, "r");
 	if (fp == NULL)
 		err(1, "fopen %s", _PATH_BAT0_CAP);
-	if (fgets(buf, sizeof(buf), fp) == NULL)
-		if (ferror(fp))
-			err(1, "fgets %s", _PATH_BAT0_CAP);
-	if (buf[strlen(buf) - 1] == '\n')
-		buf[strlen(buf) - 1] = '\0';
+	fscanf(fp, "%d", &howmuch);
 	fclose(fp);
 
-	howmuch = strtonum(buf, 0, INT_MAX, &errstr);
-	if (errstr)
-		errx(1, "%s: %s", buf, errstr);
 	if (howmuch > maxcap)
 		howmuch = maxcap;
 
@@ -175,14 +167,10 @@ pollbat(void)
 	fp = fopen(_PATH_AC_ONLINE, "r");
 	if (fp == NULL)
 		err(1, "fopen %s", _PATH_AC_ONLINE);
-	if (fgets(buf, sizeof(buf), fp) == NULL)
-		if (ferror(fp))
-			err(1, "fgets %s", _PATH_AC_ONLINE);
-	if (buf[strlen(buf) - 1] == '\n');
-		buf[strlen(buf) - 1] = '\0';
+	fscanf(fp, "%d", &acon);
 	fclose(fp);
 
-	state = buf[0] == '1' ? AC_ON : AC_OFF;
+	state = acon != 0 ? AC_ON : AC_OFF;
 }
 #else
 #error unsupported system
