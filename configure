@@ -1,0 +1,13 @@
+#!/bin/sh
+
+case `uname` in
+OpenBSD)
+	ln -s config.bsd config.mk
+	;;
+Linux)
+	ln -s config.linux config.mk
+	;;
+*)
+	echo Unsupported system 1>&2
+	;;
+esac

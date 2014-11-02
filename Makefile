@@ -1,8 +1,4 @@
-PREFIX = /usr/local
-MANPREFIX = $(PREFIX)/man
-
-CFLAGS = -I/usr/X11R6/include
-LDLIBS = -L/usr/X11R6/lib -lX11 # -lbsd
+include config.mk
 
 OBJ = xbattmon.o
 BIN = xbattmon

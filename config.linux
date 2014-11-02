@@ -1,0 +1,5 @@
+PREFIX = /usr/local
+MANPREFIX = $(PREFIX)/man
+
+CFLAGS =
+LDLIBS = -lX11 -lbsd
