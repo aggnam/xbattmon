@@ -2,10 +2,10 @@
 
 case `uname` in
 OpenBSD)
-	ln -sf config.bsd config.mk
+	ln -sf config.bsd.mk config.mk
 	;;
 Linux)
-	ln -sf config.linux config.mk
+	ln -sf config.linux.mk config.mk
 	;;
 *)
 	echo Unsupported system 1>&2
