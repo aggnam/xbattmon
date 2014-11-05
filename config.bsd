@@ -1,5 +1,6 @@
 PREFIX = /usr/local
 MANPREFIX = $(PREFIX)/man
 
-CFLAGS = -I/usr/X11R6/include
-LDLIBS = -L/usr/X11R6/lib -lX11
+CPPFLAGS = -I/usr/X11R6/include
+LDFLAGS = -L/usr/X11R6/lib
+LDLIBS = -lX11
