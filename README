@@ -1,0 +1,5 @@
+You need libbsd to build this on Linux.
+
+# ./configure
+# make
+# make install
