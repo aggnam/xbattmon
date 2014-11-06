@@ -218,19 +218,19 @@ again:
 			redraw();
 			continue;
 		}
-		if (FD_ISSET(dpyfd, &rfds) != 0) {
-			while (XCheckIfEvent(dpy, &ev, evpredicate, NULL) == True) {
-				switch (ev.type) {
-				case Expose:
-					pollbat();
-					redraw();
-					break;
-				case VisibilityNotify:
-					if (ev.xvisibility.state != VisibilityUnobscured)
-						if (raise == 1)
-							XRaiseWindow(dpy, winbar);
-					break;
-				}
+		if (FD_ISSET(dpyfd, &rfds) == 0)
+			continue;
+		while (XCheckIfEvent(dpy, &ev, evpredicate, NULL) == True) {
+			switch (ev.type) {
+			case Expose:
+				pollbat();
+				redraw();
+				break;
+			case VisibilityNotify:
+				if (ev.xvisibility.state != VisibilityUnobscured)
+					if (raise == 1)
+						XRaiseWindow(dpy, winbar);
+				break;
 			}
 		}
 	}
