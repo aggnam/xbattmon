@@ -4,7 +4,8 @@ BIN = xbattmon
 
 all: $(BIN)
 
-xbattmon.o: arg.h config.h
+$(BIN): $(BIN).o
+$(BIN).o: arg.h config.h
 
 install: all
 	mkdir -p $(DESTDIR)$(PREFIX)/bin
