@@ -1,11 +1,14 @@
 include config.mk
 
+OBJ = xbattmon.o
 BIN = xbattmon
 
 all: $(BIN)
 
-$(BIN): $(BIN).o
-$(BIN).o: arg.h config.h
+$(BIN): $(OBJ)
+	$(CC) $(LDFLAGS) -o $@ $(OBJ) $(LDLIBS)
+
+xbattmon.o: arg.h config.h
 
 install: all
 	mkdir -p $(DESTDIR)$(PREFIX)/bin
@@ -18,7 +21,7 @@ uninstall:
 	rm -f $(DESTDIR)$(MANPREFIX)/man1/$(BIN).1
 
 clean:
-	rm -f $(BIN) $(BIN).o
+	rm -f $(BIN) $(OBJ)
 
 .SUFFIXES: .def.h
 
