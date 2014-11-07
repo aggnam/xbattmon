@@ -9,14 +9,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#ifdef __linux__
-#include <bsd/stdlib.h>
-#endif
+
+#include <X11/Xlib.h>
 
 #ifdef __OpenBSD__
 #include <machine/apmvar.h>
+#elif __linux__
+#include <bsd/stdlib.h>
 #endif
-#include <X11/Xlib.h>
 
 #include "arg.h"
 
@@ -137,7 +137,6 @@ pollbat(void)
 	int r;
 	int fd;
 
-#define PATH_APM "/dev/apm"
 	fd = open(PATH_APM, O_RDONLY);
 	if (fd < 0)
 		err(1, "open %s", PATH_APM);
@@ -162,17 +161,15 @@ pollbat(void)
 	FILE *fp;
 	int acon;
 
-#define PATH_BAT0_CAP "/sys/class/power_supply/BAT0/capacity"
-	fp = fopen(PATH_BAT0_CAP, "r");
+	fp = fopen(PATH_BAT_CAP, "r");
 	if (fp == NULL)
-		err(1, "fopen %s", PATH_BAT0_CAP);
+		err(1, "fopen %s", PATH_BAT_CAP);
 	fscanf(fp, "%d", &batcap);
 	fclose(fp);
 
 	if (batcap > maxcap)
 		batcap = maxcap;
 
-#define PATH_AC_ONLINE "/sys/class/power_supply/AC/online"
 	fp = fopen(PATH_AC_ONLINE, "r");
 	if (fp == NULL)
 		err(1, "fopen %s", PATH_AC_ONLINE);
@@ -181,8 +178,6 @@ pollbat(void)
 
 	state = acon != 0 ? AC_ON : AC_OFF;
 }
-#else
-#error unsupported system
 #endif
 
 Bool
