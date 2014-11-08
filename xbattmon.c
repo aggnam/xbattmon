@@ -210,10 +210,8 @@ again:
 			redraw();
 			continue;
 		}
-		if ((pfd[0].revents & (POLLERR | POLLNVAL)) != 0)
+		if ((pfd[0].revents & (POLLERR | POLLHUP | POLLNVAL)) != 0)
 			errx(1, "bad fd: %d", pfd[0].fd);
-		if ((pfd[0].revents & (POLLIN | POLLHUP)) == 0)
-			continue;
 		while (XCheckIfEvent(dpy, &ev, evpredicate, NULL) == True) {
 			switch (ev.type) {
 			case Expose:
