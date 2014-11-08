@@ -1,11 +1,11 @@
 /* See LICENSE file for copyright and license details. */
 #include <sys/ioctl.h>
-#include <sys/select.h>
 
 #include <err.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <limits.h>
+#include <poll.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -190,30 +190,29 @@ void
 loop(void)
 {
 	XEvent ev;
-	fd_set rfds;
-	struct timeval tv;
+	struct pollfd pfd[1];
 	int dpyfd;
 	int n;
 
 	dpyfd = ConnectionNumber(dpy);
 	while (1) {
-		FD_ZERO(&rfds);
-		FD_SET(dpyfd, &rfds);
-		tv.tv_sec = pollinterval;
-		tv.tv_usec = 0;
+		pfd[0].fd = dpyfd;
+		pfd[0].events = POLLIN;
 again:
-		n = select(dpyfd + 1, &rfds, NULL, NULL, &tv);
+		n = poll(pfd, 1, pollinterval * 1000);
 		if (n < 0) {
 			if (errno == EINTR)
 				goto again;
-			err(1, "select");
+			err(1, "poll");
 		}
 		if (n == 0) {
 			pollbat();
 			redraw();
 			continue;
 		}
-		if (FD_ISSET(dpyfd, &rfds) == 0)
+		if ((pfd[0].revents & (POLLERR | POLLNVAL)) != 0)
+			errx(1, "bad fd: %d", pfd[0].fd);
+		if ((pfd[0].revents & (POLLIN | POLLHUP)) == 0)
 			continue;
 		while (XCheckIfEvent(dpy, &ev, evpredicate, NULL) == True) {
 			switch (ev.type) {
