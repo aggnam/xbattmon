@@ -198,11 +198,10 @@ loop(void)
 	while (1) {
 		pfd[0].fd = dpyfd;
 		pfd[0].events = POLLIN;
-again:
 		n = poll(pfd, 1, pollinterval * 1000);
 		if (n < 0) {
 			if (errno == EINTR)
-				goto again;
+				continue;
 			err(1, "poll");
 		}
 		if (n == 0) {
