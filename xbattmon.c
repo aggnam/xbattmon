@@ -192,37 +192,37 @@ loop(void)
 	XEvent ev;
 	struct pollfd pfd[1];
 	int dpyfd;
-	int n;
 
 	dpyfd = ConnectionNumber(dpy);
 	while (1) {
 		pfd[0].fd = dpyfd;
 		pfd[0].events = POLLIN;
-		n = poll(pfd, 1, pollinterval * 1000);
-		if (n < 0) {
-			if (errno == EINTR)
-				continue;
-			err(1, "poll");
-		}
-		if (n == 0) {
+		switch (poll(pfd, 1, pollinterval * 1000)) {
+		case -1:
+			if (errno != EINTR)
+				err(1, "poll");
+			break;
+		case 0:
 			pollbat();
 			redraw();
-			continue;
-		}
-		if ((pfd[0].revents & (POLLERR | POLLHUP | POLLNVAL)) != 0)
-			errx(1, "bad fd: %d", pfd[0].fd);
-		while (XCheckIfEvent(dpy, &ev, evpredicate, NULL) == True) {
-			switch (ev.type) {
-			case Expose:
-				pollbat();
-				redraw();
-				break;
-			case VisibilityNotify:
-				if (ev.xvisibility.state != VisibilityUnobscured)
-					if (raise == 1)
-						XRaiseWindow(dpy, winbar);
-				break;
+			break;
+		default:
+			if ((pfd[0].revents & (POLLERR | POLLHUP | POLLNVAL)) != 0)
+				errx(1, "bad fd: %d", pfd[0].fd);
+			while (XCheckIfEvent(dpy, &ev, evpredicate, NULL) == True) {
+				switch (ev.type) {
+				case Expose:
+					pollbat();
+					redraw();
+					break;
+				case VisibilityNotify:
+					if (ev.xvisibility.state != VisibilityUnobscured)
+						if (raise == 1)
+							XRaiseWindow(dpy, winbar);
+					break;
+				}
 			}
+			break;
 		}
 	}
 }
