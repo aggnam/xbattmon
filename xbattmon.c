@@ -26,7 +26,9 @@ enum {
 
 enum {
 	BOTTOM,
-	TOP
+	TOP,
+	LEFT,
+	RIGHT
 };
 
 char *argv0;
@@ -78,6 +80,18 @@ setup(void)
 		barwidth = width;
 		barheight = thickness;
 		break;
+	case LEFT:
+		barx = 0;
+		bary = 0;
+		barwidth = thickness;
+		barheight = height;
+		break;
+	case RIGHT:
+		barx = width - thickness;
+		bary = 0;
+		barwidth = thickness;
+		barheight = height;
+		break;
 	}
 
 	winbar = XCreateSimpleWindow(dpy, DefaultRootWindow(dpy), barx, bary, barwidth,
@@ -109,19 +123,36 @@ redraw(void)
 {
 	int pos;
 
-	pos = barwidth * batcap / maxcap;
+	if (placement == BOTTOM || placement == TOP)
+		pos = barwidth * batcap / maxcap;
+	else
+		pos = barheight * batcap / maxcap;
 	switch (state) {
 	case AC_ON:
-		XSetForeground(dpy, gcbar, cmap[COLOR_BAT_CHARGED]);
-		XFillRectangle(dpy, winbar, gcbar, 0, 0, pos, thickness);
-		XSetForeground(dpy, gcbar, cmap[COLOR_BAT_LEFT2CHARGE]);
-		XFillRectangle(dpy, winbar, gcbar, pos, 0, barwidth, thickness);
+		if (placement == BOTTOM || placement == TOP) {
+			XSetForeground(dpy, gcbar, cmap[COLOR_BAT_CHARGED]);
+			XFillRectangle(dpy, winbar, gcbar, 0, 0, pos, thickness);
+			XSetForeground(dpy, gcbar, cmap[COLOR_BAT_LEFT2CHARGE]);
+			XFillRectangle(dpy, winbar, gcbar, pos, 0, barwidth, thickness);
+		} else {
+			XSetForeground(dpy, gcbar, cmap[COLOR_BAT_CHARGED]);
+			XFillRectangle(dpy, winbar, gcbar, 0, barheight - pos, thickness, barheight);
+			XSetForeground(dpy, gcbar, cmap[COLOR_BAT_LEFT2CHARGE]);
+			XFillRectangle(dpy, winbar, gcbar, 0, 0, thickness, barheight - pos);
+		}
 		break;
 	case AC_OFF:
-		XSetForeground(dpy, gcbar, cmap[COLOR_BAT_LEFT2DRAIN]);
-		XFillRectangle(dpy, winbar, gcbar, 0, 0, pos, thickness);
-		XSetForeground(dpy, gcbar, cmap[COLOR_BAT_DRAINED]);
-		XFillRectangle(dpy, winbar, gcbar, pos, 0, barwidth, thickness);
+		if (placement == BOTTOM || placement == TOP) {
+			XSetForeground(dpy, gcbar, cmap[COLOR_BAT_LEFT2DRAIN]);
+			XFillRectangle(dpy, winbar, gcbar, 0, 0, pos, thickness);
+			XSetForeground(dpy, gcbar, cmap[COLOR_BAT_DRAINED]);
+			XFillRectangle(dpy, winbar, gcbar, pos, 0, barwidth, thickness);
+		} else {
+			XSetForeground(dpy, gcbar, cmap[COLOR_BAT_LEFT2DRAIN]);
+			XFillRectangle(dpy, winbar, gcbar, 0, barheight - pos, thickness, barheight);
+			XSetForeground(dpy, gcbar, cmap[COLOR_BAT_DRAINED]);
+			XFillRectangle(dpy, winbar, gcbar, 0, 0, thickness, barheight - pos);
+		}
 		break;
 	}
 	XFlush(dpy);
@@ -235,7 +266,7 @@ loop(void)
 void
 usage(void)
 {
-	fprintf(stderr, "usage: %s [-c capacity] [-i interval] [-p bottom | top] [-t thickness]\n", argv0);
+	fprintf(stderr, "usage: %s [-c capacity] [-i interval] [-p bottom | top | left | right] [-t thickness]\n", argv0);
 	fprintf(stderr, " -c\tspecify battery capacity\n");
 	fprintf(stderr, " -i\tbattery poll interval in seconds\n");
 	fprintf(stderr, " -p\tbar placement\n");
@@ -268,6 +299,10 @@ main(int argc, char *argv[])
 			placement = BOTTOM;
 		else if (strcmp(arg, "top") == 0)
 			placement = TOP;
+		else if (strcmp(arg, "left") == 0)
+			placement = LEFT;
+		else if (strcmp(arg, "right") == 0)
+			placement = RIGHT;
 		else
 			errx(1, "%s: invalid placement", arg);
 		break;
