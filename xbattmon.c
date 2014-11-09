@@ -122,7 +122,7 @@ void
 redraw(void)
 {
 	int pos;
-	unsigned long *done, *left;
+	unsigned long done, left;
 
 	if (placement == BOTTOM || placement == TOP)
 		pos = barwidth * batcap / maxcap;
@@ -130,22 +130,22 @@ redraw(void)
 		pos = barheight * batcap / maxcap;
 
 	if (state == AC_ON) {
-		done = &cmap[COLOR_BAT_CHARGED];
-		left = &cmap[COLOR_BAT_LEFT2CHARGE];
+		done = cmap[COLOR_BAT_CHARGED];
+		left = cmap[COLOR_BAT_LEFT2CHARGE];
 	} else {
-		done = &cmap[COLOR_BAT_LEFT2DRAIN];
-		left = &cmap[COLOR_BAT_DRAINED];
+		done = cmap[COLOR_BAT_LEFT2DRAIN];
+		left = cmap[COLOR_BAT_DRAINED];
 	}
 
 	if (placement == BOTTOM || placement == TOP) {
-		XSetForeground(dpy, gcbar, *done);
+		XSetForeground(dpy, gcbar, done);
 		XFillRectangle(dpy, winbar, gcbar, 0, 0, pos, thickness);
-		XSetForeground(dpy, gcbar, *left);
+		XSetForeground(dpy, gcbar, left);
 		XFillRectangle(dpy, winbar, gcbar, pos, 0, barwidth, thickness);
 	} else {
-		XSetForeground(dpy, gcbar, *done);
+		XSetForeground(dpy, gcbar, done);
 		XFillRectangle(dpy, winbar, gcbar, 0, barheight - pos, thickness, barheight);
-		XSetForeground(dpy, gcbar, *left);
+		XSetForeground(dpy, gcbar, left);
 		XFillRectangle(dpy, winbar, gcbar, 0, 0, thickness, barheight - pos);
 	}
 
