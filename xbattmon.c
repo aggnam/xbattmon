@@ -1,15 +1,12 @@
 /* See LICENSE file for copyright and license details. */
-#include <sys/ioctl.h>
-
+#include <X11/Xlib.h>
 #include <err.h>
 #include <errno.h>
-#include <fcntl.h>
 #include <limits.h>
 #include <poll.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <X11/Xlib.h>
 
 #include "arg.h"
 
@@ -123,6 +120,9 @@ redraw(void)
 }
 
 #ifdef __OpenBSD__
+#include <sys/ioctl.h>
+#include <fcntl.h>
+#include <unistd.h>
 #include <machine/apmvar.h>
 void
 pollbat(void)
