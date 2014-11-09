@@ -64,8 +64,13 @@ setup(void)
 	width = DisplayWidth(dpy, screen);
 	height = DisplayHeight(dpy, screen);
 
-	if (thickness > height)
-		thickness = height;
+	if (placement == BOTTOM || placement == TOP) {
+		if (thickness > height)
+			thickness = height;
+	} else {
+		if (thickness > width)
+			thickness = width;
+	}
 
 	switch (placement) {
 	case BOTTOM:
