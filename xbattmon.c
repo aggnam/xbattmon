@@ -122,39 +122,33 @@ void
 redraw(void)
 {
 	int pos;
+	unsigned long *done, *left;
 
 	if (placement == BOTTOM || placement == TOP)
 		pos = barwidth * batcap / maxcap;
 	else
 		pos = barheight * batcap / maxcap;
-	switch (state) {
-	case AC_ON:
-		if (placement == BOTTOM || placement == TOP) {
-			XSetForeground(dpy, gcbar, cmap[COLOR_BAT_CHARGED]);
-			XFillRectangle(dpy, winbar, gcbar, 0, 0, pos, thickness);
-			XSetForeground(dpy, gcbar, cmap[COLOR_BAT_LEFT2CHARGE]);
-			XFillRectangle(dpy, winbar, gcbar, pos, 0, barwidth, thickness);
-		} else {
-			XSetForeground(dpy, gcbar, cmap[COLOR_BAT_CHARGED]);
-			XFillRectangle(dpy, winbar, gcbar, 0, barheight - pos, thickness, barheight);
-			XSetForeground(dpy, gcbar, cmap[COLOR_BAT_LEFT2CHARGE]);
-			XFillRectangle(dpy, winbar, gcbar, 0, 0, thickness, barheight - pos);
-		}
-		break;
-	case AC_OFF:
-		if (placement == BOTTOM || placement == TOP) {
-			XSetForeground(dpy, gcbar, cmap[COLOR_BAT_LEFT2DRAIN]);
-			XFillRectangle(dpy, winbar, gcbar, 0, 0, pos, thickness);
-			XSetForeground(dpy, gcbar, cmap[COLOR_BAT_DRAINED]);
-			XFillRectangle(dpy, winbar, gcbar, pos, 0, barwidth, thickness);
-		} else {
-			XSetForeground(dpy, gcbar, cmap[COLOR_BAT_LEFT2DRAIN]);
-			XFillRectangle(dpy, winbar, gcbar, 0, barheight - pos, thickness, barheight);
-			XSetForeground(dpy, gcbar, cmap[COLOR_BAT_DRAINED]);
-			XFillRectangle(dpy, winbar, gcbar, 0, 0, thickness, barheight - pos);
-		}
-		break;
+
+	if (state == AC_ON) {
+		done = &cmap[COLOR_BAT_CHARGED];
+		left = &cmap[COLOR_BAT_LEFT2CHARGE];
+	} else {
+		done = &cmap[COLOR_BAT_LEFT2DRAIN];
+		left = &cmap[COLOR_BAT_DRAINED];
 	}
+
+	if (placement == BOTTOM || placement == TOP) {
+		XSetForeground(dpy, gcbar, *done);
+		XFillRectangle(dpy, winbar, gcbar, 0, 0, pos, thickness);
+		XSetForeground(dpy, gcbar, *left);
+		XFillRectangle(dpy, winbar, gcbar, pos, 0, barwidth, thickness);
+	} else {
+		XSetForeground(dpy, gcbar, *done);
+		XFillRectangle(dpy, winbar, gcbar, 0, barheight - pos, thickness, barheight);
+		XSetForeground(dpy, gcbar, *left);
+		XFillRectangle(dpy, winbar, gcbar, 0, 0, thickness, barheight - pos);
+	}
+
 	XFlush(dpy);
 }
 
