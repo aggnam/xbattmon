@@ -9,14 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
 #include <X11/Xlib.h>
-
-#ifdef __OpenBSD__
-#include <machine/apmvar.h>
-#elif __linux__
-#include <bsd/stdlib.h>
-#endif
 
 #include "arg.h"
 
@@ -130,6 +123,7 @@ redraw(void)
 }
 
 #ifdef __OpenBSD__
+#include <machine/apmvar.h>
 void
 pollbat(void)
 {
@@ -155,6 +149,7 @@ pollbat(void)
 	state = info.ac_state == APM_AC_ON ? AC_ON : AC_OFF;
 }
 #elif __linux__
+#include <bsd/stdlib.h>
 void
 pollbat(void)
 {
