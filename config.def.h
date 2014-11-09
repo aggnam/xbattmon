@@ -7,6 +7,6 @@ char *colors[] = {
 
 unsigned int thickness = 2;	/* 2 pixels by default */
 time_t pollinterval = 5;	/* poll battery state every 5 seconds */
-int bottom = 1;			/* set to 0 if you want the bar to be at the top */
+int placement = BOTTOM;		/* set to TOP if you want a top placement */
 int maxcap = 100;		/* maximum battery capacity */
 int raise = 0;			/* set to 1 if you want the bar to be raised on top of other windows */

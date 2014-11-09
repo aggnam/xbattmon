@@ -24,6 +24,11 @@ enum {
 	COLOR_BAT_LEFT2DRAIN
 };
 
+enum {
+	BOTTOM,
+	TOP
+};
+
 char *argv0;
 Display *dpy;
 Window winbar;
@@ -60,16 +65,19 @@ setup(void)
 	if (thickness > height)
 		thickness = height;
 
-	if (bottom == 1) {	
+	switch (placement) {
+	case BOTTOM:
 		barx = 0;
 		bary = height - thickness;
 		barwidth = width;
 		barheight = thickness;
-	} else {
+		break;
+	case TOP:
 		barx = 0;
 		bary = 0;
 		barwidth = width;
 		barheight = thickness;
+		break;
 	}
 
 	winbar = XCreateSimpleWindow(dpy, DefaultRootWindow(dpy), barx, bary, barwidth,
@@ -257,9 +265,9 @@ main(int argc, char *argv[])
 	case 'p':
 		arg = EARGF(usage());
 		if (strcmp(arg, "bottom") == 0)
-			bottom = 1;
+			placement = BOTTOM;
 		else if (strcmp(arg, "top") == 0)
-			bottom = 0;
+			placement = TOP;
 		else
 			errx(1, "%s: invalid placement", arg);
 		break;
