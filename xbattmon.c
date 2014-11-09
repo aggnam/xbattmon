@@ -124,6 +124,7 @@ redraw(void)
 #include <fcntl.h>
 #include <unistd.h>
 #include <machine/apmvar.h>
+
 void
 pollbat(void)
 {
@@ -150,6 +151,7 @@ pollbat(void)
 }
 #elif __linux__
 #include <bsd/stdlib.h>
+
 void
 pollbat(void)
 {
