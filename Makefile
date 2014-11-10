@@ -1,3 +1,5 @@
+VERSION=0.5
+
 include config.mk
 
 OBJ = xbattmon.o

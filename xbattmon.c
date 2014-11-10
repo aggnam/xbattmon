@@ -265,11 +265,12 @@ loop(void)
 void
 usage(void)
 {
-	fprintf(stderr, "usage: %s [-c capacity] [-i interval] [-p bottom | top | left | right] [-t thickness]\n", argv0);
+	fprintf(stderr, "usage: %s [-c capacity] [-i interval] [-p bottom | top | left | right] [-t thickness] [-v]\n", argv0);
 	fprintf(stderr, " -c\tspecify battery capacity\n");
 	fprintf(stderr, " -i\tbattery poll interval in seconds\n");
 	fprintf(stderr, " -p\tbar placement\n");
 	fprintf(stderr, " -t\tbar thickness\n");
+	fprintf(stderr, " -v\tshow version\n");
 	exit(1);
 }
 
@@ -311,6 +312,9 @@ main(int argc, char *argv[])
 		if (errstr)
 			errx(1, "%s: %s", arg, errstr);
 		break;
+	case 'v':
+		printf("xbattmon-%s\n", VERSION);
+		return 0;
 	default:
 		usage();
 	} ARGEND;
