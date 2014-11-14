@@ -174,7 +174,7 @@ pollbat(void)
 	if (fd < 0)
 		err(1, "open %s", PATH_APM);
 	r = ioctl(fd, APM_IOC_GETPOWER, &info);
-	if (r != 0)
+	if (r < 0)
 		err(1, "APM_IOC_GETPOWER %s", PATH_APM);
 	close(fd);
 
