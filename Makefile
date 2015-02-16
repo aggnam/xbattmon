@@ -2,7 +2,7 @@ VERSION=0.5.1
 
 include config.mk
 
-OBJ = xbattmon.o
+OBJ = strtonum.o xbattmon.o
 BIN = xbattmon
 
 all: $(BIN)

@@ -9,6 +9,7 @@
 #include <string.h>
 
 #include "arg.h"
+#include "util.h"
 
 #define LEN(x) (sizeof(x) / sizeof(*(x)))
 
@@ -188,8 +189,6 @@ pollbat(void)
 	state = info.ac_state == APM_AC_ON ? AC_ON : AC_OFF;
 }
 #elif __linux__
-#include <bsd/stdlib.h>
-
 void
 pollbat(void)
 {
