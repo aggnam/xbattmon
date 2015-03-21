@@ -1,5 +1,6 @@
 /* See LICENSE file for copyright and license details. */
 #include <X11/Xlib.h>
+#include <X11/Xutil.h>
 #include <err.h>
 #include <errno.h>
 #include <limits.h>
@@ -52,6 +53,8 @@ setup(void)
 {
 	XSetWindowAttributes attr;
 	XColor color, exact;
+	XTextProperty text;
+	static char *name = "xbattmon";
 	int r;
 	int screen;
 	unsigned int width, height;
@@ -106,6 +109,9 @@ setup(void)
 
 	attr.override_redirect = True;
 	XChangeWindowAttributes(dpy, winbar, CWOverrideRedirect, &attr);
+
+	XStringListToTextProperty(&name, 1, &text);
+	XSetWMName(dpy, winbar, &text);
 
 	XSelectInput(dpy, winbar, ExposureMask | VisibilityChangeMask);
 	if (raise == 1)
