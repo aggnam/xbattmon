@@ -1,5 +1,6 @@
 /* See LICENSE file for copyright and license details. */
 #include <X11/Xlib.h>
+#include <X11/Xatom.h>
 #include <X11/Xutil.h>
 #include <err.h>
 #include <errno.h>
@@ -54,6 +55,7 @@ setup(void)
 	XSetWindowAttributes attr;
 	XColor color, exact;
 	XTextProperty text;
+	Atom wintype, wintype_dock;
 	static char *name = "xbattmon";
 	int r;
 	int screen;
@@ -112,6 +114,11 @@ setup(void)
 
 	XStringListToTextProperty(&name, 1, &text);
 	XSetWMName(dpy, winbar, &text);
+
+	wintype = XInternAtom(dpy, "_NET_WM_WINDOW_TYPE", True);
+	wintype_dock = XInternAtom(dpy, "_NET_WM_WINDOW_TYPE_DOCK", True);
+	XChangeProperty(dpy, winbar, wintype, XA_ATOM, 32,
+	    PropModeReplace, (unsigned char *)&wintype_dock, 1);
 
 	XSelectInput(dpy, winbar, ExposureMask | VisibilityChangeMask);
 	if (raise == 1)
