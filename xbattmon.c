@@ -202,24 +202,37 @@ pollbat(void)
 	state = info.ac_state == APM_AC_ON ? AC_ON : AC_OFF;
 }
 #elif __linux__
+#include <unistd.h>
 void
 pollbat(void)
 {
 	FILE *fp;
-	int acon;
+	int acon, retry;
 
+	retry = 2;
+fail1:
 	fp = fopen(PATH_BAT_CAP, "r");
-	if (fp == NULL)
-		err(1, "fopen %s", PATH_BAT_CAP);
+	if (fp == NULL) {
+		if (retry-- == 0)
+			err(1, "fopen %s", PATH_BAT_CAP);
+		sleep(1);
+		goto fail1;
+	}
 	fscanf(fp, "%d", &batcap);
 	fclose(fp);
 
 	if (batcap > maxcap)
 		batcap = maxcap;
 
+	retry = 2;
+fail2:
 	fp = fopen(PATH_AC_ONLINE, "r");
-	if (fp == NULL)
-		err(1, "fopen %s", PATH_AC_ONLINE);
+	if (fp == NULL) {
+		if (retry-- == 0)
+			err(1, "fopen %s", PATH_AC_ONLINE);
+		sleep(1);
+		goto fail2;
+	}
 	fscanf(fp, "%d", &acon);
 	fclose(fp);
 
