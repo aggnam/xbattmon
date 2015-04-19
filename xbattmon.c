@@ -116,8 +116,8 @@ setup(void)
 	XStringListToTextProperty(&name, 1, &text);
 	XSetWMName(dpy, winbar, &text);
 
-	wintype = XInternAtom(dpy, "_NET_WM_WINDOW_TYPE", True);
-	wintype_dock = XInternAtom(dpy, "_NET_WM_WINDOW_TYPE_DOCK", True);
+	wintype = XInternAtom(dpy, "_NET_WM_WINDOW_TYPE", False);
+	wintype_dock = XInternAtom(dpy, "_NET_WM_WINDOW_TYPE_DOCK", False);
 	XChangeProperty(dpy, winbar, wintype, XA_ATOM, 32,
 	    PropModeReplace, (unsigned char *)&wintype_dock, 1);
 
