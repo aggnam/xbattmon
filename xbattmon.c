@@ -45,6 +45,8 @@ unsigned int barwidth;
 unsigned int barheight;
 int state;			/* AC_ON or AC_OFF */
 int batcap;			/* 0 if completely discharged or `maxcap' if completely charged */
+int timeout;
+int blinkon;
 
 #include "config.h"
 
@@ -136,6 +138,8 @@ setup(void)
 			errx(1, "cannot allocate color resources");
 		cmap[i] = color.pixel;
 	}
+
+	critical = critical * maxcap / 100;
 }
 
 void
@@ -143,6 +147,14 @@ redraw(void)
 {
 	int pos;
 	unsigned long done, left;
+
+	if (state == AC_OFF && batcap <= critical) {
+		timeout = 500;
+		blinkon = !blinkon;
+	} else {
+		timeout = 5000;
+		blinkon = 0;
+	}
 
 	if (placement == BOTTOM || placement == TOP)
 		pos = barwidth * batcap / maxcap;
@@ -153,7 +165,7 @@ redraw(void)
 		done = cmap[COLOR_BAT_CHARGED];
 		left = cmap[COLOR_BAT_LEFT2CHARGE];
 	} else {
-		done = cmap[COLOR_BAT_LEFT2DRAIN];
+		done = cmap[blinkon == 0 ? COLOR_BAT_LEFT2DRAIN : COLOR_BAT_DRAINED];
 		left = cmap[COLOR_BAT_DRAINED];
 	}
 
@@ -256,7 +268,7 @@ loop(void)
 	while (1) {
 		pfd[0].fd = dpyfd;
 		pfd[0].events = POLLIN;
-		switch (poll(pfd, 1, pollinterval * 1000)) {
+		switch (poll(pfd, 1, timeout)) {
 		case -1:
 			if (errno != EINTR)
 				err(1, "poll");
@@ -289,9 +301,8 @@ loop(void)
 void
 usage(void)
 {
-	fprintf(stderr, "usage: %s [-c capacity] [-i interval] [-p bottom | top | left | right] [-t thickness] [-v]\n", argv0);
+	fprintf(stderr, "usage: %s [-c capacity] [-p bottom | top | left | right] [-t thickness] [-v]\n", argv0);
 	fprintf(stderr, " -c\tspecify battery capacity\n");
-	fprintf(stderr, " -i\tbattery poll interval in seconds\n");
 	fprintf(stderr, " -p\tbar placement\n");
 	fprintf(stderr, " -t\tbar thickness\n");
 	fprintf(stderr, " -v\tshow version\n");
@@ -308,12 +319,6 @@ main(int argc, char *argv[])
 	case 'c':
 		arg = EARGF(usage());
 		maxcap = strtonum(arg, 1, 100, &errstr);
-		if (errstr)
-			errx(1, "%s: %s", arg, errstr);
-		break;
-	case 'i':
-		arg = EARGF(usage());
-		pollinterval = strtonum(arg, 1, 60, &errstr);
 		if (errstr)
 			errx(1, "%s: %s", arg, errstr);
 		break;
