@@ -226,6 +226,7 @@ fail1:
 	if (fp == NULL) {
 		if (retry-- == 0)
 			err(1, "fopen %s", PATH_BAT_CAP);
+		warn("fopen %s", PATH_BAT_CAP);
 		sleep(1);
 		goto fail1;
 	}
@@ -241,6 +242,7 @@ fail2:
 	if (fp == NULL) {
 		if (retry-- == 0)
 			err(1, "fopen %s", PATH_AC_ONLINE);
+		warn("fopen %s", PATH_BAT_CAP);
 		sleep(1);
 		goto fail2;
 	}
