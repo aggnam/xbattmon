@@ -46,7 +46,7 @@ unsigned int barheight;
 int state;			/* AC_ON or AC_OFF */
 int batcap;			/* 0 if completely discharged or `maxcap' if completely charged */
 int timeout;
-int blinkon;
+int blink;
 
 #include "config.h"
 
@@ -150,10 +150,10 @@ redraw(void)
 
 	if (state == AC_OFF && batcap <= critical) {
 		timeout = 500;
-		blinkon = !blinkon;
+		blink = !blink;
 	} else {
 		timeout = 5000;
-		blinkon = 0;
+		blink = 0;
 	}
 
 	if (placement == BOTTOM || placement == TOP)
@@ -165,7 +165,7 @@ redraw(void)
 		done = cmap[COLOR_BAT_CHARGED];
 		left = cmap[COLOR_BAT_LEFT2CHARGE];
 	} else {
-		done = cmap[blinkon == 0 ? COLOR_BAT_LEFT2DRAIN : COLOR_BAT_DRAINED];
+		done = cmap[blink == 0 ? COLOR_BAT_LEFT2DRAIN : COLOR_BAT_DRAINED];
 		left = cmap[COLOR_BAT_DRAINED];
 	}
 
