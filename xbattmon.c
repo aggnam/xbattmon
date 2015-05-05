@@ -220,7 +220,7 @@ pollbat(void)
 	FILE *fp;
 	int acon, retry;
 
-	retry = 2;
+	retry = 3;
 fail1:
 	fp = fopen(PATH_BAT_CAP, "r");
 	if (fp == NULL) {
@@ -236,7 +236,7 @@ fail1:
 	if (batcap > maxcap)
 		batcap = maxcap;
 
-	retry = 2;
+	retry = 3;
 fail2:
 	fp = fopen(PATH_AC_ONLINE, "r");
 	if (fp == NULL) {
