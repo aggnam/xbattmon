@@ -4,6 +4,9 @@ case `uname` in
 OpenBSD)
 	ln -sf config.bsd.mk config.mk
 	;;
+DragonFly)
+	ln -sf config.dfly.mk config.mk
+	;;
 Linux)
 	ln -sf config.linux.mk config.mk
 	;;

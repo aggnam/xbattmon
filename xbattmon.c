@@ -213,6 +213,30 @@ pollbat(void)
 
 	state = info.ac_state == APM_AC_ON ? AC_ON : AC_OFF;
 }
+#elif __DragonFly__
+#include <sys/ioctl.h>
+#include <fcntl.h>
+#include <machine/apm_bios.h>
+
+void
+pollbat(void)
+{
+	struct apm_info ai;
+	int r;
+	int fd;
+
+	fd = open(PATH_APM, O_RDONLY);
+	if (fd < 0)
+		err(1, "open %s", PATH_APM);
+	r = ioctl(fd, APMIO_GETINFO, &ai);
+	if (r < 0)
+		err(1, "APMIO_GETINFO %s", PATH_APM);
+	batcap = ai.ai_batt_life;
+	if (batcap > maxcap)
+		batcap = maxcap;
+	state = ai.ai_acline ? AC_ON : AC_OFF;
+	close(fd);
+}
 #elif __linux__
 void
 pollbat(void)
