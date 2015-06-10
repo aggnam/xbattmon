@@ -193,6 +193,21 @@ redraw(void)
 		XFillRectangle(dpy, winbar, gcbar, 0, 0, thickness, barheight - pos);
 	}
 
+	if (transparent == 1) {
+		if (blink == 0)
+			XMapWindow(dpy, winbar);
+		else
+			XUnmapWindow(dpy, winbar);
+		XSetForeground(dpy, gcbar, done);
+		if (placement == BOTTOM || placement == TOP) {
+			XResizeWindow(dpy, winbar, pos, thickness);
+			XFillRectangle(dpy, winbar, gcbar, 0, 0, pos, thickness);
+		} else {
+			XMoveResizeWindow(dpy, winbar, barx, barheight - pos, thickness, pos);
+			XFillRectangle(dpy, winbar, gcbar, 0, 0, thickness, barheight);
+		}
+	}
+
 	XFlush(dpy);
 }
 
