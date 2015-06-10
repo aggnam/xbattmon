@@ -164,7 +164,7 @@ redraw(void)
 			oldtp = tp;
 		}
 	} else {
-		timeout = 5000;
+		timeout = 500;
 		blink = 0;
 	}
 
