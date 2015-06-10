@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include <unistd.h>
 
 #include "arg.h"
@@ -147,10 +148,21 @@ redraw(void)
 {
 	int pos;
 	unsigned long done, left;
+	static struct timespec oldtp = { 0 };
+	struct timespec tp;
+	unsigned int delta;
 
 	if (state == AC_OFF && batcap <= critical) {
-		timeout = 500;
-		blink = !blink;
+		clock_gettime(CLOCK_MONOTONIC, &tp);
+		delta = (tp.tv_sec * 1000 + tp.tv_nsec / 1000000)
+		    - (oldtp.tv_sec * 1000 + oldtp.tv_nsec / 1000000);
+		if (delta < 500) {
+			timeout = 500 - delta;
+		} else {
+			timeout = 500;
+			blink = !blink;
+			oldtp = tp;
+		}
 	} else {
 		timeout = 5000;
 		blink = 0;
