@@ -1,6 +1,5 @@
 PREFIX = /usr/local
 MANPREFIX = $(PREFIX)/share/man
 
-CPPFLAGS = -DVERSION=\"${VERSION}\" -DPATH_BAT_CAP=\"/sys/class/power_supply/BAT0/capacity\" \
-	-DPATH_AC_ONLINE=\"/sys/class/power_supply/AC/online\"
+CPPFLAGS = -DVERSION=\"${VERSION}\"
 LDLIBS = -lX11
