@@ -177,7 +177,7 @@ redraw(void)
 		done = cmap[COLOR_BAT_CHARGED];
 		left = cmap[COLOR_BAT_LEFT2CHARGE];
 	} else {
-		done = cmap[blink == 0 ? COLOR_BAT_LEFT2DRAIN : COLOR_BAT_DRAINED];
+		done = cmap[!blink ? COLOR_BAT_LEFT2DRAIN : COLOR_BAT_DRAINED];
 		left = cmap[COLOR_BAT_DRAINED];
 	}
 
@@ -194,7 +194,7 @@ redraw(void)
 	}
 
 	if (transparent == 1) {
-		if (blink == 0)
+		if (!blink)
 			XMapWindow(dpy, winbar);
 		else
 			XUnmapWindow(dpy, winbar);
@@ -281,7 +281,7 @@ pollbat(void)
 	retry = 3;
 fail1:
 	fp = fopen(PATH_BAT_CAP, "r");
-	if (fp == NULL) {
+	if (!fp) {
 		if (retry-- == 0)
 			err(1, "fopen %s", PATH_BAT_CAP);
 		warn("fopen %s", PATH_BAT_CAP);
@@ -297,7 +297,7 @@ fail1:
 	retry = 3;
 fail2:
 	fp = fopen(PATH_AC_ONLINE, "r");
-	if (fp == NULL) {
+	if (!fp) {
 		if (retry-- == 0)
 			err(1, "fopen %s", PATH_AC_ONLINE);
 		warn("fopen %s", PATH_BAT_CAP);
@@ -307,7 +307,7 @@ fail2:
 	fscanf(fp, "%d", &acon);
 	fclose(fp);
 
-	state = acon != 0 ? AC_ON : AC_OFF;
+	state = acon ? AC_ON : AC_OFF;
 }
 #endif
 
@@ -338,9 +338,9 @@ loop(void)
 			redraw();
 			break;
 		default:
-			if ((pfd[0].revents & (POLLERR | POLLHUP | POLLNVAL)) != 0)
+			if ((pfd[0].revents & (POLLERR | POLLHUP | POLLNVAL)))
 				errx(1, "bad fd: %d", pfd[0].fd);
-			while (XCheckIfEvent(dpy, &ev, evpredicate, NULL) == True) {
+			while (XCheckIfEvent(dpy, &ev, evpredicate, NULL)) {
 				switch (ev.type) {
 				case Expose:
 					pollbat();
@@ -408,7 +408,7 @@ main(int argc, char *argv[])
 		usage();
 	} ARGEND;
 
-	if (argc != 0)
+	if (argc)
 		usage();
 
 	setup();
