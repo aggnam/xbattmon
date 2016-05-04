@@ -193,7 +193,7 @@ redraw(void)
 		XFillRectangle(dpy, winbar, gcbar, 0, 0, thickness, barheight - pos);
 	}
 
-	if (transparent == 1) {
+	if (transparent) {
 		if (!blink)
 			XMapWindow(dpy, winbar);
 		else
