@@ -361,11 +361,12 @@ loop(void)
 void
 usage(void)
 {
-	fprintf(stderr, "usage: %s [-c capacity] [-p bottom | top | left | right] [-t thickness] [-v]\n", argv0);
-	fprintf(stderr, " -c\tspecify battery capacity\n");
-	fprintf(stderr, " -p\tbar placement\n");
-	fprintf(stderr, " -t\tbar thickness\n");
-	fprintf(stderr, " -v\tshow version\n");
+	fprintf(stderr, "usage: %s [-c capacity] [-p bottom | top | left | right] [-t thickness] [-v]\n"
+		" -c\tspecify battery capacity\n"
+		" -p\tbar placement\n"
+		" -t\tbar thickness\n"
+		" -v\tshow version\n",
+		argv0);
 	exit(1);
 }
 
