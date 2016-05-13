@@ -216,8 +216,6 @@ redraw(void)
 #include <fcntl.h>
 #include <machine/apmvar.h>
 
-#define PATH_APM "/dev/apm"
-
 void
 pollbat(void)
 {
@@ -247,8 +245,6 @@ pollbat(void)
 #include <fcntl.h>
 #include <machine/apm_bios.h>
 
-#define PATH_APM "/dev/apm"
-
 void
 pollbat(void)
 {
@@ -269,9 +265,6 @@ pollbat(void)
 	close(fd);
 }
 #elif __linux__
-#define PATH_BAT_CAP "/sys/class/power_supply/BAT0/capacity"
-#define PATH_AC_ONLINE "/sys/class/power_supply/AC/online"
-
 void
 pollbat(void)
 {
