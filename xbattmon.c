@@ -269,34 +269,20 @@ void
 pollbat(void)
 {
 	FILE *fp;
-	int acon, retry;
+	int acon;
 
-	retry = 3;
-fail1:
 	fp = fopen(PATH_BAT_CAP, "r");
-	if (!fp) {
-		if (retry-- == 0)
-			err(1, "fopen %s", PATH_BAT_CAP);
-		warn("fopen %s", PATH_BAT_CAP);
-		sleep(1);
-		goto fail1;
-	}
+	if (!fp)
+		err(1, "fopen %s", PATH_BAT_CAP);
 	fscanf(fp, "%d", &batcap);
 	fclose(fp);
 
 	if (batcap > maxcap)
 		batcap = maxcap;
 
-	retry = 3;
-fail2:
 	fp = fopen(PATH_AC_ONLINE, "r");
-	if (!fp) {
-		if (retry-- == 0)
-			err(1, "fopen %s", PATH_AC_ONLINE);
-		warn("fopen %s", PATH_AC_ONLINE);
-		sleep(1);
-		goto fail2;
-	}
+	if (!fp)
+		err(1, "fopen %s", PATH_AC_ONLINE);
 	fscanf(fp, "%d", &acon);
 	fclose(fp);
 
