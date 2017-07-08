@@ -269,13 +269,33 @@ void
 pollbat(void)
 {
 	FILE *fp;
+	int bat0cap, bat1cap = -1; /* secondary battery is optional */
 	int acon;
 
 	fp = fopen(PATH_BAT0_CAP, "r");
 	if (!fp)
 		err(1, "fopen %s", PATH_BAT0_CAP);
-	fscanf(fp, "%d", &batcap);
+	fscanf(fp, "%d", &bat0cap);
 	fclose(fp);
+
+	if (bat0cap > 100)
+		bat0cap = 100;
+
+#ifdef PATH_BAT1_CAP
+	fp = fopen(PATH_BAT1_CAP, "r");
+	if (!fp)
+		err(1, "fopen %s", PATH_BAT1_CAP);
+	fscanf(fp, "%d", &bat1cap);
+	fclose(fp);
+
+	if (bat1cap > 100)
+		bat1cap = 100;
+#endif
+
+	if (bat1cap != -1)
+		batcap = 100 * (bat0cap + bat1cap) / 200;
+	else
+		batcap = bat0cap;
 
 	if (batcap > maxcap)
 		batcap = maxcap;
