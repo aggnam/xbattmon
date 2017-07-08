@@ -271,9 +271,9 @@ pollbat(void)
 	FILE *fp;
 	int acon;
 
-	fp = fopen(PATH_BAT_CAP, "r");
+	fp = fopen(PATH_BAT0_CAP, "r");
 	if (!fp)
-		err(1, "fopen %s", PATH_BAT_CAP);
+		err(1, "fopen %s", PATH_BAT0_CAP);
 	fscanf(fp, "%d", &batcap);
 	fclose(fp);
 
