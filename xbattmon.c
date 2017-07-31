@@ -269,33 +269,45 @@ void
 pollbat(void)
 {
 	FILE *fp;
-	int bat0cap, bat1cap = -1; /* secondary battery is optional */
+	char *path_list_bat[] = PATH_LIST_BAT;
+	char path_energy_full[PATH_MAX];
+	char path_energy_now[PATH_MAX];
+	int total_energy_full = 0;
+	int total_energy_now = 0;
+	int energy_full;
+	int energy_now;
 	int acon;
+	int i;
 
-	fp = fopen(PATH_BAT0_CAP, "r");
-	if (!fp)
-		err(1, "fopen %s", PATH_BAT0_CAP);
-	fscanf(fp, "%d", &bat0cap);
-	fclose(fp);
+	for (i = 0; i < LEN(path_list_bat); i++) {
+		snprintf(path_energy_full, sizeof(path_energy_full),
+			 "%s/energy_full", path_list_bat[i]);
+		fp = fopen(path_energy_full, "r");
+		if (!fp) {
+			warn("fopen %s", path_energy_full);
+			continue;
+		}
+		fscanf(fp, "%d", &energy_full);
+		fclose(fp);
 
-	if (bat0cap > 100)
-		bat0cap = 100;
+		snprintf(path_energy_now, sizeof(path_energy_now),
+			 "%s/energy_now", path_list_bat[i]);
+		fp = fopen(path_energy_now, "r");
+		if (!fp) {
+			warn("fopen %s", path_energy_now);
+			continue;
+		}
+		fscanf(fp, "%d", &energy_now);
+		fclose(fp);
 
-#ifdef PATH_BAT1_CAP
-	fp = fopen(PATH_BAT1_CAP, "r");
-	if (!fp)
-		err(1, "fopen %s", PATH_BAT1_CAP);
-	fscanf(fp, "%d", &bat1cap);
-	fclose(fp);
+		total_energy_full += energy_full / 1000;
+		total_energy_now += energy_now / 1000;
+	}
 
-	if (bat1cap > 100)
-		bat1cap = 100;
-#endif
-
-	if (bat1cap != -1)
-		batcap = 100 * (bat0cap + bat1cap) / 200;
+	if (total_energy_full > 0)
+		batcap = 100 * total_energy_now / total_energy_full;
 	else
-		batcap = bat0cap;
+		batcap = 0;
 
 	if (batcap > maxcap)
 		batcap = maxcap;
