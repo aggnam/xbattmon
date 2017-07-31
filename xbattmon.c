@@ -258,11 +258,12 @@ pollbat(void)
 	r = ioctl(fd, APMIO_GETINFO, &ai);
 	if (r < 0)
 		err(1, "APMIO_GETINFO %s", PATH_APM);
+	close(fd);
+
 	batcap = ai.ai_batt_life;
 	if (batcap > maxcap)
 		batcap = maxcap;
 	state = ai.ai_acline ? AC_ON : AC_OFF;
-	close(fd);
 }
 #elif __linux__
 void
