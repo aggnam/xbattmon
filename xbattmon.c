@@ -270,43 +270,39 @@ void
 pollbat(void)
 {
 	FILE *fp;
-	char *path_list_bat[] = PATH_LIST_BAT;
-	char path_energy_full[PATH_MAX];
-	char path_energy_now[PATH_MAX];
-	int total_energy_full = 0;
-	int total_energy_now = 0;
-	int energy_full;
-	int energy_now;
+	char tmp[PATH_MAX];
+	int total_full = 0, total_now = 0;
+	int full, now;
 	int acon;
-	int i;
+	int i = 0;
 
-	for (i = 0; i < LEN(path_list_bat); i++) {
-		snprintf(path_energy_full, sizeof(path_energy_full),
-			 "%s/energy_full", path_list_bat[i]);
-		fp = fopen(path_energy_full, "r");
+	for (;;) {
+		snprintf(tmp, sizeof(tmp), PATH_FMT_BAT_FULL, i);
+		fp = fopen(tmp, "r");
 		if (!fp) {
-			warn("fopen %s", path_energy_full);
-			continue;
+			warn("fopen %s", tmp);
+			break;
 		}
-		fscanf(fp, "%d", &energy_full);
+		fscanf(fp, "%d", &full);
 		fclose(fp);
 
-		snprintf(path_energy_now, sizeof(path_energy_now),
-			 "%s/energy_now", path_list_bat[i]);
-		fp = fopen(path_energy_now, "r");
+		snprintf(tmp, sizeof(tmp), PATH_FMT_BAT_NOW, i);
+		fp = fopen(tmp, "r");
 		if (!fp) {
-			warn("fopen %s", path_energy_now);
-			continue;
+			warn("fopen %s", tmp);
+			break;
 		}
-		fscanf(fp, "%d", &energy_now);
+		fscanf(fp, "%d", &now);
 		fclose(fp);
 
-		total_energy_full += energy_full / 1000;
-		total_energy_now += energy_now / 1000;
+		total_full += full / 1000;
+		total_now += now / 1000;
+
+		i++;
 	}
 
-	if (total_energy_full > 0)
-		batcap = 100 * total_energy_now / total_energy_full;
+	if (total_full > 0)
+		batcap = 100 * total_now / total_full;
 	else
 		batcap = 0;
 
