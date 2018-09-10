@@ -280,7 +280,9 @@ pollbat(void)
 		snprintf(tmp, sizeof(tmp), PATH_FMT_BAT_FULL, i);
 		fp = fopen(tmp, "r");
 		if (!fp) {
-			warn("fopen %s", tmp);
+			/* warn only if no battery is reachable */
+			if (i == 0)
+				warn("fopen %s", tmp);
 			break;
 		}
 		fscanf(fp, "%d", &full);
