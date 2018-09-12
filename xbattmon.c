@@ -209,20 +209,6 @@ redraw(void)
 		left = cmap[COLOR_BAT_DRAINED];
 	}
 
-	if (placement == BOTTOM || placement == TOP) {
-		XMoveResizeWindow(dpy, winbar, barx, bary, barwidth, thickness);
-		XSetForeground(dpy, gcbar, done);
-		XFillRectangle(dpy, winbar, gcbar, 0, 0, pos, thickness);
-		XSetForeground(dpy, gcbar, left);
-		XFillRectangle(dpy, winbar, gcbar, pos, 0, barwidth, thickness);
-	} else {
-		XMoveResizeWindow(dpy, winbar, barx, bary, thickness, barheight);
-		XSetForeground(dpy, gcbar, done);
-		XFillRectangle(dpy, winbar, gcbar, 0, barheight - pos, thickness, barheight);
-		XSetForeground(dpy, gcbar, left);
-		XFillRectangle(dpy, winbar, gcbar, 0, 0, thickness, barheight - pos);
-	}
-
 	if (transparent) {
 		if (!blink)
 			XMapWindow(dpy, winbar);
@@ -235,6 +221,20 @@ redraw(void)
 		} else {
 			XMoveResizeWindow(dpy, winbar, barx, bary + (barheight - pos), thickness, pos);
 			XFillRectangle(dpy, winbar, gcbar, 0, 0, thickness, barheight);
+		}
+	} else {
+		if (placement == BOTTOM || placement == TOP) {
+			XMoveResizeWindow(dpy, winbar, barx, bary, barwidth, thickness);
+			XSetForeground(dpy, gcbar, done);
+			XFillRectangle(dpy, winbar, gcbar, 0, 0, pos, thickness);
+			XSetForeground(dpy, gcbar, left);
+			XFillRectangle(dpy, winbar, gcbar, pos, 0, barwidth, thickness);
+		} else {
+			XMoveResizeWindow(dpy, winbar, barx, bary, thickness, barheight);
+			XSetForeground(dpy, gcbar, done);
+			XFillRectangle(dpy, winbar, gcbar, 0, barheight - pos, thickness, barheight);
+			XSetForeground(dpy, gcbar, left);
+			XFillRectangle(dpy, winbar, gcbar, 0, 0, thickness, barheight - pos);
 		}
 	}
 
