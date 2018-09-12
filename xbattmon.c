@@ -150,12 +150,13 @@ setup(void)
 	XChangeProperty(dpy, winbar, wintype, XA_ATOM, 32,
 	    PropModeReplace, (unsigned char *)&wintype_dock, 1);
 
-	XSelectInput(dpy, winbar, ExposureMask | VisibilityChangeMask);
 	XSelectInput(dpy, RootWindow(dpy, screen), StructureNotifyMask);
-	if (raise == 1)
+	if (raise == 1) {
+		XSelectInput(dpy, winbar, ExposureMask | VisibilityChangeMask);
 		XMapRaised(dpy, winbar);
-	else
+	} else {
 		XMapWindow(dpy, winbar);
+	}
 
 	gcbar = XCreateGC(dpy, winbar, 0, 0);
 
@@ -387,8 +388,7 @@ loop(void)
 					break;
 				case VisibilityNotify:
 					if (ev.xvisibility.state != VisibilityUnobscured)
-						if (raise == 1)
-							XRaiseWindow(dpy, winbar);
+						XRaiseWindow(dpy, winbar);
 					break;
 				case ConfigureNotify:
 					if (ev.xconfigure.window == DefaultRootWindow(dpy)) {
