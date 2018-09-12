@@ -1,3 +1,5 @@
+.POSIX:
+
 VERSION = 1.1
 
 include config.mk
@@ -9,6 +11,9 @@ all: $(BIN)
 
 $(BIN): $(OBJ)
 	$(CC) $(LDFLAGS) -o $@ $(OBJ) $(LDLIBS)
+
+.c.o:
+	$(CC) $(CFLAGS) $(CPPFLAGS) -c $<
 
 xbattmon.o: arg.h config.h
 
