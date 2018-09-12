@@ -3,6 +3,7 @@
 VERSION = 1.1
 
 include config.os.mk
+include config.mk
 
 OBJ = strtonum.o xbattmon.o
 BIN = xbattmon
@@ -10,10 +11,10 @@ BIN = xbattmon
 all: $(BIN)
 
 $(BIN): $(OBJ)
-	$(CC) $(LDFLAGS) -o $@ $(OBJ) $(LDLIBS)
+	$(CC) $(LDFLAGS) -o $@ $(OBJ) $(_LDLIBS)
 
 .c.o:
-	$(CC) $(CFLAGS) $(CPPFLAGS) -c $<
+	$(CC) $(_CFLAGS) $(_CPPFLAGS) -c $<
 
 xbattmon.o: arg.h config.h
 
