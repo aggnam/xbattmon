@@ -2,7 +2,7 @@
 
 VERSION = 1.1
 
-include config.mk
+include config.os.mk
 
 OBJ = strtonum.o xbattmon.o
 BIN = xbattmon
