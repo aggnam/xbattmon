@@ -2,6 +2,9 @@
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
 #include <X11/Xutil.h>
+#ifdef XINERAMA
+#include <X11/extensions/Xinerama.h>
+#endif /* XINERAMA */
 #include <err.h>
 #include <errno.h>
 #include <limits.h>
@@ -54,26 +57,28 @@ int blink;
 unsigned long cmap[LEN(colors)];
 
 void
-setup(void)
+setsize(void)
 {
-	XSetWindowAttributes attr;
-	XColor color, exact;
-	XTextProperty text;
-	Atom wintype, wintype_dock;
-	static char *name = "xbattmon";
-	int r;
-	int screen;
 	unsigned int width, height;
-	size_t i;
+	int screen;
+	int scrx, scry;
 
-	dpy = XOpenDisplay(NULL);
-	if (!dpy)
-		errx(1, "cannot open display");
-
-	screen = DefaultScreen(dpy);
-	width = DisplayWidth(dpy, screen);
-	height = DisplayHeight(dpy, screen);
-
+#ifdef XINERAMA
+	if (XineramaIsActive(dpy)) {
+		int n;
+		XineramaScreenInfo *info = XineramaQueryScreens(dpy, &n);
+		scrx = info[0].x_org;
+		scry = info[0].y_org;
+		width = info[0].width;
+		height = info[0].height;
+	} else
+#endif /* XINERAMA */
+	{
+		scrx = scry = 0;
+		screen = DefaultScreen(dpy);
+		width = DisplayWidth(dpy, screen);
+		height = DisplayHeight(dpy, screen);
+	}
 	if (placement == BOTTOM || placement == TOP) {
 		if (thickness > height)
 			thickness = height;
@@ -84,30 +89,51 @@ setup(void)
 
 	switch (placement) {
 	case BOTTOM:
-		barx = 0;
-		bary = height - thickness;
+		barx = scrx;
+		bary = scry + (height - thickness);
 		barwidth = width;
 		barheight = thickness;
 		break;
 	case TOP:
-		barx = 0;
-		bary = 0;
+		barx = scrx;
+		bary = scry;
 		barwidth = width;
 		barheight = thickness;
 		break;
 	case LEFT:
-		barx = 0;
-		bary = 0;
+		barx = scrx;
+		bary = scry;
 		barwidth = thickness;
 		barheight = height;
 		break;
 	case RIGHT:
-		barx = width - thickness;
-		bary = 0;
+		barx = scrx + (width - thickness);
+		bary = scry;
 		barwidth = thickness;
 		barheight = height;
 		break;
 	}
+}
+
+void
+setup(void)
+{
+	XSetWindowAttributes attr;
+	XColor color, exact;
+	XTextProperty text;
+	Atom wintype, wintype_dock;
+	static char *name = "xbattmon";
+	int r;
+	int screen;
+	size_t i;
+
+	dpy = XOpenDisplay(NULL);
+	if (!dpy)
+		errx(1, "cannot open display");
+
+	screen = DefaultScreen(dpy);
+
+	setsize();
 
 	winbar = XCreateSimpleWindow(dpy, DefaultRootWindow(dpy), barx, bary, barwidth,
 				     barheight, 0, BlackPixel(dpy, screen),
@@ -125,6 +151,7 @@ setup(void)
 	    PropModeReplace, (unsigned char *)&wintype_dock, 1);
 
 	XSelectInput(dpy, winbar, ExposureMask | VisibilityChangeMask);
+	XSelectInput(dpy, RootWindow(dpy, screen), StructureNotifyMask);
 	if (raise == 1)
 		XMapRaised(dpy, winbar);
 	else
@@ -182,11 +209,13 @@ redraw(void)
 	}
 
 	if (placement == BOTTOM || placement == TOP) {
+		XMoveResizeWindow(dpy, winbar, barx, bary, barwidth, thickness);
 		XSetForeground(dpy, gcbar, done);
 		XFillRectangle(dpy, winbar, gcbar, 0, 0, pos, thickness);
 		XSetForeground(dpy, gcbar, left);
 		XFillRectangle(dpy, winbar, gcbar, pos, 0, barwidth, thickness);
 	} else {
+		XMoveResizeWindow(dpy, winbar, barx, bary, thickness, barheight);
 		XSetForeground(dpy, gcbar, done);
 		XFillRectangle(dpy, winbar, gcbar, 0, barheight - pos, thickness, barheight);
 		XSetForeground(dpy, gcbar, left);
@@ -200,10 +229,10 @@ redraw(void)
 			XUnmapWindow(dpy, winbar);
 		XSetForeground(dpy, gcbar, done);
 		if (placement == BOTTOM || placement == TOP) {
-			XResizeWindow(dpy, winbar, pos, thickness);
+			XMoveResizeWindow(dpy, winbar, barx, bary, pos, thickness);
 			XFillRectangle(dpy, winbar, gcbar, 0, 0, pos, thickness);
 		} else {
-			XMoveResizeWindow(dpy, winbar, barx, barheight - pos, thickness, pos);
+			XMoveResizeWindow(dpy, winbar, barx, bary + (barheight - pos), thickness, pos);
 			XFillRectangle(dpy, winbar, gcbar, 0, 0, thickness, barheight);
 		}
 	}
@@ -360,6 +389,12 @@ loop(void)
 					if (ev.xvisibility.state != VisibilityUnobscured)
 						if (raise == 1)
 							XRaiseWindow(dpy, winbar);
+					break;
+				case ConfigureNotify:
+					if (ev.xconfigure.window == DefaultRootWindow(dpy)) {
+						setsize();
+						redraw();
+					}
 					break;
 				}
 			}
