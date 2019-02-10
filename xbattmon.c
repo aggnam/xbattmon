@@ -246,20 +246,25 @@ redraw(void)
 #include <fcntl.h>
 #include <machine/apmvar.h>
 
+int fd;
+
+void
+openbat(void)
+{
+	fd = open(PATH_APM, O_RDONLY|O_CLOEXEC);
+	if (fd < 0)
+		err(1, "open %s", PATH_APM);
+}
+
 void
 pollbat(void)
 {
 	struct apm_power_info info;
 	int r;
-	int fd;
 
-	fd = open(PATH_APM, O_RDONLY);
-	if (fd < 0)
-		err(1, "open %s", PATH_APM);
 	r = ioctl(fd, APM_IOC_GETPOWER, &info);
 	if (r < 0)
 		err(1, "APM_IOC_GETPOWER %s", PATH_APM);
-	close(fd);
 
 	batcap = info.battery_life;
 	if (batcap > maxcap)
@@ -458,6 +463,9 @@ main(int argc, char *argv[])
 		usage();
 
 	setup();
+#ifdef __OpenBSD__
+	openbat();
+#endif
 	pollbat();
 	redraw();
 	loop();
