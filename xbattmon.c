@@ -465,6 +465,8 @@ main(int argc, char *argv[])
 	setup();
 #ifdef __OpenBSD__
 	openbat();
+	if (unveil(NULL, NULL) == -1)
+		err(1, "unveil");
 #endif
 	pollbat();
 	redraw();
