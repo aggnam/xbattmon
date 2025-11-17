@@ -1,8 +1,8 @@
 char *colors[] = {
-	[COLOR_BAT_CHARGED]     = "green",
-	[COLOR_BAT_LEFT2CHARGE] = "grey",
-	[COLOR_BAT_DRAINED]     = "red",
-	[COLOR_BAT_LEFT2DRAIN]  = "blue"
+	[COLOR_BAT_CHARGED]     = "black",
+	[COLOR_BAT_LEFT2CHARGE] = "white",
+	[COLOR_BAT_DRAINED]     = "black",
+	[COLOR_BAT_LEFT2DRAIN]  = "white"
 };
 
 unsigned int thickness = 2;	/* 2 pixels by default */
